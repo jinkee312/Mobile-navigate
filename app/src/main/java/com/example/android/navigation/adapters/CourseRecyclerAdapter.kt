@@ -1,7 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.android.navigation.adapters
 
 
 import android.app.AlertDialog
+import android.app.Fragment
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
@@ -13,24 +16,35 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.navigation.R
 import com.example.android.navigation.models.Course
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import android.os.Bundle
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import com.example.android.navigation.FileFragment
+import com.example.android.navigation.R
+import androidx.appcompat.app.AppCompatActivity
+import com.example.android.navigation.models.File
+import androidx.fragment.app.FragmentActivity
+
+
+
 
 //
 
-class BlogRecyclerAdapter (val courseList: List<Course>, val context: Context): RecyclerView.Adapter<BlogRecyclerAdapter.BlogViewHolder>()
+class CourseRecyclerAdapter (val courseList: List<Course>, val context: Context): RecyclerView.Adapter<CourseRecyclerAdapter.CourseViewHolder>()
 {
     private lateinit var coursetable: DatabaseReference
 
-    private val TAG: String = "AppDebug"
 
 //    private var items: List<BlogPost> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BlogViewHolder {
-        return BlogViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.layout_course_list_item, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
+        return CourseViewHolder(
+                LayoutInflater.from(parent.context).inflate(com.example.android.navigation.R.layout.layout_course_list_item, parent, false)
         )
     }
 
@@ -38,16 +52,33 @@ class BlogRecyclerAdapter (val courseList: List<Course>, val context: Context): 
 
 
 
-    override fun onBindViewHolder(holder: BlogViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
 
 
         holder.itemView.setOnClickListener(){
             val perItemPosition = courseList.get(position)
 
+            val bundle = Bundle()
+            bundle.putString("courseid", perItemPosition.courseid)
+            bundle.putString("title",perItemPosition.title)
+
+
+            val myFragment = FileFragment()
+            myFragment.setArguments(bundle)
+            val activity = context as AppCompatActivity
+
+
+//            (context as FragmentActivity).fragmentManager.beginTransaction()
+//                    .replace(R.id.courseFragment, myFragment as Fragment)
+//                    .commit()
+
+            activity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.courseFragment,myFragment).commit()//
+
         }
         holder.blog_title.text = courseList.get(position).title
         holder.blog_author.text = courseList.get(position).username
-//        holder.bind(courseList.get(position))
+//        holder.bind(fileList.get(position))
         holder.edit.setOnClickListener()
         {
             val perItemPosition = courseList.get(position)
@@ -68,6 +99,8 @@ class BlogRecyclerAdapter (val courseList: List<Course>, val context: Context): 
     override fun getItemCount(): Int {
         return courseList.size
     }
+
+
 
     private fun updateDialog(perItemPosition: Course) {
 
@@ -146,11 +179,11 @@ class BlogRecyclerAdapter (val courseList: List<Course>, val context: Context): 
 
 
 
-//    fun submitList(courseList: List<Course>){
-//        this.courseList = courseList
+//    fun submitList(fileList: List<Course>){
+//        this.fileList = fileList
 //    }
 
-    class BlogViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
+    class CourseViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
 //    constructor(
 //        itemView: View
 //    ): RecyclerView.ViewHolder(itemView){

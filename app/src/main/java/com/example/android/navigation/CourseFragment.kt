@@ -1,21 +1,17 @@
 package com.example.android.navigation
 
 
-import android.app.Activity
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.navigation.adapters.BlogRecyclerAdapter
+import com.example.android.navigation.adapters.CourseRecyclerAdapter
 import com.example.android.navigation.models.Course
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_course.*
@@ -31,7 +27,7 @@ class CourseFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     //    private lateinit var progressBar: ProgressBar
 
-    private lateinit var blogAdapter: BlogRecyclerAdapter
+    private lateinit var courseAdapter: CourseRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -40,7 +36,7 @@ class CourseFragment : Fragment() {
         coursetable = FirebaseDatabase.getInstance().getReference("Course")
         courseList = mutableListOf()
 
-        val rootView = inflater!!.inflate(R.layout.fragment_course, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_course, container, false)
 
 //        addDataSet()
 
@@ -67,9 +63,9 @@ class CourseFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             val itemDeco = DividerItemDecoration(context, RecyclerView.VERTICAL)
             addItemDecoration(itemDeco)
-            blogAdapter = BlogRecyclerAdapter(courseList, context)
-            blogAdapter.notifyDataSetChanged()
-            adapter = blogAdapter
+            courseAdapter = CourseRecyclerAdapter(courseList, context)
+            courseAdapter.notifyDataSetChanged()
+            adapter = courseAdapter
 
         }
 
