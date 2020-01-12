@@ -3,9 +3,13 @@ package com.example.android.navigation.adapters
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,8 +19,10 @@ import com.example.android.navigation.R
 import com.example.android.navigation.models.File
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.net.URI
+import java.net.URL
 
-class FileRecyclerAdapter (val fileList: List<File>, val context: Context): RecyclerView.Adapter<FileRecyclerAdapter.FileViewHolder>()
+class FileRecyclerAdapter (val fileList: List<File>, val context: Context, val courseid:String): RecyclerView.Adapter<FileRecyclerAdapter.FileViewHolder>()
 {
     private lateinit var filetable: DatabaseReference
 
@@ -37,10 +43,21 @@ class FileRecyclerAdapter (val fileList: List<File>, val context: Context): Recy
 
         var name:String = fileList.get(position).filename
         holder.file_title.setText(name)
+
+
         holder.edit.setOnClickListener()
         {
             val perItemPosition = fileList.get(position)
             updateDialog(perItemPosition)
+        }
+        holder.itemView.setOnClickListener(){
+            val perItemPosition = fileList.get(position)
+            Log.d("sad",perItemPosition.url)
+            var intent = Intent()
+            intent.setType(Intent.ACTION_VIEW)
+            intent.setDataAndType(Uri.parse(perItemPosition.url), "application/pdf")
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            context.startActivity(intent)
         }
 //
 //        holder.delete.setOnClickListener()
@@ -94,7 +111,7 @@ class FileRecyclerAdapter (val fileList: List<File>, val context: Context): Recy
                 {
                     // update data
                     val std_data = File(perItemPosition.fileid,perItemPosition.url,name)
-                    filedatabaseref.child(perItemPosition.fileid).setValue(std_data)
+                    filedatabaseref.child(courseid).child(perItemPosition.fileid).setValue(std_data)
                     Toast.makeText(context, "Data Updated", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -124,6 +141,7 @@ class FileRecyclerAdapter (val fileList: List<File>, val context: Context): Recy
         val file_title = itemView.findViewById(R.id.file_title) as TextView
 //        val blog_author = itemView.findViewById(R.id.blog_author) as TextView
         val edit = itemView.findViewById(R.id.btn_editfile) as ImageView
+
 //        val delete = itemView.findViewById(R.id.btn_deletecourse) as ImageView
 
     }
