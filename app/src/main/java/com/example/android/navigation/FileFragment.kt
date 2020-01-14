@@ -127,9 +127,9 @@ class FileFragment : Fragment() {
 
     private fun uploadFile(pdfuri: Uri) {
 
-        filestorage.child(courseid).putFile(pdfuri).addOnSuccessListener {//
+        filestorage.child(courseid).child(filename.text.toString()).putFile(pdfuri).addOnSuccessListener {//
             taskSnapshot ->
-                filestorage.child(courseid).downloadUrl.addOnSuccessListener(){
+                filestorage.child(courseid).child(filename.text.toString()).downloadUrl.addOnSuccessListener(){
                     uri ->
                     var url: String = uri.toString()
                     var id: String = filetable.push().key.toString()
@@ -137,15 +137,17 @@ class FileFragment : Fragment() {
                     var file = File(id, url, name)
                     filetable.child(id).setValue(file)
 
-                }
+                }.addOnCompleteListener { task ->
 
+                    Toast.makeText(context, "File Successfully Uploaded", Toast.LENGTH_SHORT).show()
+                    filename.setText("")
+                }
 
         }.addOnFailureListener { exception ->
             Toast.makeText(context, "File Not Successfully Uploaded", Toast.LENGTH_SHORT).show()
         }.addOnCompleteListener { task ->
 
             Toast.makeText(context, "File Successfully Uploaded", Toast.LENGTH_SHORT).show()
-            filename.setText("")
         }
 
     }
